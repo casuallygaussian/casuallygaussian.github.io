@@ -127,7 +127,7 @@ author:
       # url: "https://facebook.com/"
     - label: "GitHub"
       #icon: "fab fa-fw fa-github-square"
-       url: "https://github.com/casuallygaussian"
+       url: https://github.com/casuallygaussian
   #  - label: "Instagram"
   #    icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
