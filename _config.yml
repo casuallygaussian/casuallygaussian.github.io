@@ -111,8 +111,10 @@ author:
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Data Science Blog"
   location         : #"Somewhere"
-  email            :
-  links:
+  email            : "ferreirarodrigo189@gmail.com"
+  github           : "casuallygaussian"
+  linkedin         : "rodrigolferreira"
+  #links:
     #- label: "Email"
     #  icon: "fas fa-fw fa-envelope-square"
     #   url: "mailto:ferreirarodrigo189@gmail.com"
@@ -125,28 +127,31 @@ author:
     #- label: "Facebook"
   #    icon: "fab fa-fw fa-facebook-square"
       # url: "https://facebook.com/"
-    - label: "GitHub"
+    #- label: "GitHub"
       #icon: "fab fa-fw fa-github-square"
-       url: https://github.com/casuallygaussian
+    #   url: https://github.com/casuallygaussian
   #  - label: "Instagram"
   #    icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
 
-    - label: "LinkedIn"
-      url: "https://www.linkedin.com/in/rodrigolferreira"
+  #  - label: "LinkedIn"
+  #    url: "https://www.linkedin.com/in/rodrigolferreira"
 
 # Site Footer
 footer:
-  links:
+  email            : "ferreirarodrigo189@gmail.com"
+  github           : "casuallygaussian"
+  linkedin         : "rodrigolferreira"
+  #links:
   #  - label: "Twitter"
   #    icon: "fab fa-fw fa-twitter-square"
       # url:
   #  - label: "Facebook"
   #    icon: "fab fa-fw fa-facebook-square"
       # url:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-       url: "https://github.com/casuallygaussian"
+  #  - label: "GitHub"
+  #    icon: "fab fa-fw fa-github"
+  #     url: "https://github.com/casuallygaussian"
   #  - label: "GitLab"
   #    icon: "fab fa-fw fa-gitlab"
       # url:
