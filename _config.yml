@@ -111,7 +111,7 @@ author:
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Data Science Blog"
   location         : #"Somewhere"
-  email            : "ferreirarodrigo189@gmail.com"
+#  email            : "ferreirarodrigo189@gmail.com"
   github           : "casuallygaussian"
   linkedin         : "rodrigolferreira"
   #links:
@@ -139,7 +139,7 @@ author:
 
 # Site Footer
 footer:
-  email            : "ferreirarodrigo189@gmail.com"
+#  email            : "ferreirarodrigo189@gmail.com"
   github           : "casuallygaussian"
   linkedin         : "rodrigolferreira"
   #links:
@@ -300,3 +300,11 @@ defaults:
       comments: # true
       share: true
       related: true
+
+    # _pages
+    - scope:
+        path: ""
+        type: pages
+      values:
+        layout: single
+        author_profile: true
