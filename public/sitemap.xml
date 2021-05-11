@@ -2,22 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://casuallygaussian.netlify.app/</loc>
-    <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+    <loc>https://username.github.io/</loc>
   </url><url>
-    <loc>https://casuallygaussian.netlify.app/page/2021-05-11-new-post/</loc>
-    <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+    <loc>https://username.github.io/page/about/</loc>
   </url><url>
-    <loc>https://casuallygaussian.netlify.app/page/</loc>
-    <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+    <loc>https://username.github.io/categories/</loc>
   </url><url>
-    <loc>https://casuallygaussian.netlify.app/page/2021-05-11-sample-post/</loc>
-    <lastmod>2021-05-11T00:00:00+00:00</lastmod>
+    <loc>https://username.github.io/page/</loc>
   </url><url>
-    <loc>https://casuallygaussian.netlify.app/page/about/</loc>
-  </url><url>
-    <loc>https://casuallygaussian.netlify.app/categories/</loc>
-  </url><url>
-    <loc>https://casuallygaussian.netlify.app/tags/</loc>
+    <loc>https://username.github.io/tags/</loc>
   </url>
 </urlset>

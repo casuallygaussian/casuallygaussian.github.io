@@ -1,6 +1,6 @@
-baseurl: https://casuallygaussian.netlify.app
+baseurl: https://username.github.io
 DefaultContentLanguage: en
-title: Casually Gaussian
+title: Beautiful Hugo
 theme: beautifulhugo
 metaDataFormat: yaml
 pygmentsStyle: trac
@@ -21,7 +21,7 @@ Params:
   rss: yes
   showRelatedPosts: yes
   socialShare: yes
-  subtitle: A casual place for uncasual analysis
+  subtitle: Build a beautiful and simple website in minutes
   useHLJS: yes
   wordCount: yes
 Author:

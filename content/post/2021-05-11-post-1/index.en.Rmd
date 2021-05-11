@@ -1,5 +1,5 @@
 ---
-title: sample post
+title: post 1
 author: R package build
 date: '2021-05-11'
 slug: []
