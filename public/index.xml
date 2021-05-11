@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Casually Gaussian</title>
+    <link>https://example.com/</link>
+    <description>Recent content on Casually Gaussian</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 11 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://example.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A first post</title>
+      <link>https://example.com/blog/2021-05-11-a-first-post/</link>
+      <pubDate>Tue, 11 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/blog/2021-05-11-a-first-post/</guid>
+      <description>  print(1+1) ## [1] 2 </description>
+    </item>
+    
+    <item>
+      <title>About Hugo Tanka</title>
+      <link>https://example.com/about/</link>
+      <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/about/</guid>
+      <description>Lorem ipsum dolor sit amet, ex has sale ullum corrumpit, sea dicam nostrum sensibus ad. Porro tritani persecuti te sed. Omittam dissentias pro ex. Atqui luptatum duo id. Eros minim eam ex, novum elitr accusam quo in. Nec ne audire euripidis, mea qualisque consetetur cu. Suspendisse volutpat sem a risus euismod convallis.
+In modus congue feugait eos. In nec nonumy volutpat corrumpit, sea assentior quaerendum no, cum affert scripta ea. No nihil voluptaria pro.</description>
+    </item>
+    
+  </channel>
+</rss>
