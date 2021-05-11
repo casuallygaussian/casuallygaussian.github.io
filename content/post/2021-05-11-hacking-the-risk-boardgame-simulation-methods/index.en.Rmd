@@ -1,0 +1,11 @@
+---
+title: Hacking the Risk boardgame using simulation methods.
+author: Rodrigo L. Ferreira
+date: '2021-05-11'
+tags:
+  - R
+  - Statistics
+---
+
+
+![](images/pexels-masood-aslami-4052295.jpg)
