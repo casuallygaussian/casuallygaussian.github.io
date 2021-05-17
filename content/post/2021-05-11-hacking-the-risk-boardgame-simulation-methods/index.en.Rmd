@@ -1,5 +1,5 @@
 ---
-title: Hacking the Risk boardgame using simulation methods.
+title: Hacking the Risk board game using simulation methods.
 author: Rodrigo L. Ferreira
 date: '2021-05-11'
 tags:
@@ -9,3 +9,314 @@ tags:
 
 
 ![](images/pexels-masood-aslami-4052295.jpg)
+
+```{r setup, echo = FALSE, include = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+```
+
+
+
+
+# Introduction
+
+If you love strategy board games like me then you have certainly stumbled upon Risk. 
+
+This classic has all the elements of an exciting strategy game: intrigue and backstabbing, grand armies marching competing for world dominance , room for strategic brilliance and a lot of ... statistics!?
+
+**To a good general luck is important** said Titus Livius the Roman Historian. Since statistics does its best to quantify "luck" I will use simple simulation methods to hack the Risk battle mechanisms. 
+
+I hope that this exercise does three things:
+
+- Demonstrate how to use simple simulation methods. 
+- Show the power of R sampling tools to assign probabilities to multiple scenarios.
+- Have one cool tool to help me dominate my family's board game nights.
+
+## The Game
+
+In case you are not familiar with the game here goes a TLDR:
+
+In Risk different players complete for world domination. The world is divided into areas (e.g. West- Africa, South-Europe, West-Europe etc ...) and the players conquer different areas by attacking territories belonging to their rivals using armies stationed near these territories. 
+
+When this happens, a battle for the territory starts. 
+
+## The Battle
+
+Battles are decided based on luck, namely the role of dices. The bigger your army the more dices you can role and higher the change of your winning.
+
+An attacker can use at most 3 dices at a time. But the number of soldiers in her army must be higher than the number of dices she wants to use (If she wants to use 3 dices she must have at least 4 soldiers, 2 dice require 3 soldiers, 1 dice requires 2 soldiers).
+
+A defender can use at most 2 dice at a time and needs a number of soldiers that at least matches the number of dice : to use 2 dice you need at least two soldiers, and to use 1 dice you need to have at least one solider in the army. 
+
+Based on this, the players role their dices and rank them. Suppose the defender used two dice and the attacker three. We take the highest two dice of the attacker to compare with the defender's two dice. 
+
+We then compare the best dice of the defender with the best from the attacker, and the second best with the second best. The number of soldiers lost by the defender is equal to the number of roles that are strictly lower than the attacker roles. If the defender has a value equal or higher than the attacker's dice then the attacker is the one that loses the army. It can be that they both lose one army. For instance, if the defender roles a 5 and a 3 and the attacker a 6 and a 3 : 6 > 5 so the defender loses but 3 = 3 so that attacker loses.
+
+Based on this fight the defender and the attacker remove the lost soldiers, and continue with a new fight, throwing the dice again until the battle is decided.
+
+## Objective
+
+Our objective is to find out the probability that we conquer a territory based on the number of soldiers we are attacking with and the number of soldiers the other player is defending with.
+
+For this post we will use a simple brute-force method. In the future we will employ smarter methods.
+
+The brute force method will simulate a lot of battles for each combination of attacker and defender. This method has one advantage : we can get good aproximate results in less than 15 minutes of coding time.
+
+A more elegant method will simply realize that the number of interactions between attacker and defender is actually quite limited: the attacker may use 1, 2 or 3 dice and the defender 1 or 2 , so we simply need to obtain the probabilities of the attacker winning a fight (a throw of dice) given the number of dice used, and then express the probabilities of winning a battle based on this and the number of soliers.
+
+
+
+Let's get started!!
+
+
+## Brute-Force
+
+R is fundamentally a functionally oriented language. As such, it shines when organize our code into functions and apply them to a set of elements. Therefore our workflow will be organized on 4 functions which grow in terms of scope of the problem:
+
+1) Given a number of atacking and defending soldiers, how many dice can a player use ? This is essencially an auxiliary function.  
+2) Given a number of dice, what is the outcome of a single fight ?  
+3) If we play multiple fights, what is the outcome of the battle (does the defender wins or the atacker wins ) ?  
+4) Given many battles what is the probability of the atacker winning ( or the defender) based on the number of soliders it has ?  
+
+I will use the following packages:
+`magrittr` - because I love to use the  pipe (`%>%`) operator 
+`dplyr` - very useful for quick data cleaning and manipulation
+`ggplot2` - to produce beautiful plots
+`furrr` - for fast parallel computations - useful to run many simulations
+
+```{r}
+
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(furrr)
+
+```
+
+**First:** a simple function to let us know the number of dice we can use based on the number of soldiers.
+
+```{r}
+
+#dice to use
+dice_to_use <- function(player = 'atacker', soldiers) {
+  stopifnot("player must be one of: 'atacker', 'defender'"= (player %in% c('atacker', 'defender')))
+  if(player == 'atacker'){
+    n <- min(soldiers - 1, 3)
+  } else {
+    n <- min(2,soldiers)
+  }
+  return(n)
+}
+
+
+```
+
+**Second:** The outcom of a single fight/throw of dice.
+
+I like to start my functions with a series of checks. `stopifnot` is very useful for this : we check if the number of dice is correct and if the values supplied make sense (that is if the number of dice is an integer).
+
+Then we sort the dice values and get the relevant ones to compare : if the atacker used 3 and the defender 2 then we just use the top 2 from the atacker.
+
+Finaly, we check in how many situations the defender loses.
+
+```{r}
+
+#single fight, not a battle
+fight_result <- function(atack_dice_vec, defend_dice_vec) {
+
+  #checks
+  stopifnot('number of atacking dices must be between 1 and 3'= between(length(atack_dice_vec), 1, 3))
+  stopifnot('number of defending dices must be between 1 and 2'= all(between(length(defend_dice_vec), 1, 2)))
+  stopifnot("all values must be integers"= all(atack_dice_vec == floor(atack_dice_vec)))
+  stopifnot("all values must be integers"= all(defend_dice_vec == floor(defend_dice_vec)))
+  
+  #compare the dice
+  atack_dice_vec <- sort(atack_dice_vec, decreasing = TRUE)
+  defend_dice_vec <- sort(defend_dice_vec, TRUE)
+  
+  if(length(atack_dice_vec) < length(defend_dice_vec)) defend_dice_vec <- defend_dice_vec[1:length(atack_dice_vec)]
+  if(length(defend_dice_vec) < length(atack_dice_vec)) atack_dice_vec <- atack_dice_vec[1:length(defend_dice_vec)]
+  
+  defender_losses <- sum(sort(atack_dice_vec) > sort(defend_dice_vec))
+  atacker_losses <- sum(defender_losses == FALSE)
+  
+  return(c('defender_losses' = defender_losses , 'atacker_losses' = atacker_losses ))
+  
+
+}
+
+
+
+```
+
+**Third:** the whole battle. 
+
+Given an initial number of atacking and defending soliders we 1) check the number of dice we can use 2) we fight 3) we update the results until we have a winer (that is until they cannot use more dice, which means 0 soldiers for the defender and 1 for the atacker).
+
+```{r}
+
+#the battle
+battle <- function(n_soldiers_atacker, n_soldiers_defender ) {
+  
+  stopifnot('n_soldiers_atacker must be a positive integer' = floor(n_soldiers_atacker) == n_soldiers_atacker & n_soldiers_atacker > 0)
+    stopifnot('n_soldiers_defender must be a positive integer' = floor(n_soldiers_defender) == n_soldiers_defender & n_soldiers_defender > 0)
+  
+  while(n_soldiers_atacker > 1 & n_soldiers_defender > 0) {
+  n_dice_atacker = dice_to_use(player = 'atacker', soldiers = n_soldiers_atacker)
+  n_dice_defender = dice_to_use(player = 'defender', soldiers = n_soldiers_defender)
+  
+  throw_atacker = sample.int(6, n_dice_atacker, replace = TRUE)
+  throw_defender = sample.int(6, n_dice_defender, replace = TRUE)
+  
+  loss_vec = fight_result(throw_atacker, throw_defender)
+  
+  n_soldiers_atacker = n_soldiers_atacker - loss_vec[['atacker_losses']]
+  n_soldiers_defender = n_soldiers_defender - loss_vec[['defender_losses']]
+  
+}
+
+return(c('final_atacker' = n_soldiers_atacker  , 'final_defender' = n_soldiers_defender))
+
+  
+}
+
+
+
+```
+
+**Fourth:** we increase the scale of our simulations, we use repeat a battle with `n_soldiers_atacker` and  `n_soldiers_defender` many times to get the wining probabilities.
+
+```{r}
+
+
+
+#large scale simulation, tells us the % of times the atacker wins for a given number of atackers and defenders
+
+multi_sim <- function(N_sim = 5000, n_soldiers_atacker, n_soldiers_defender) {
+
+  c(1:N_sim) %>%
+  purrr::map_lgl(function(i){
+    x <- battle( n_soldiers_atacker =  n_soldiers_atacker ,n_soldiers_defender = n_soldiers_defender)
+    x[['final_defender']] == 0
+   
+  })  %>% sum()/N_sim
+  
+}
+
+
+
+```
+
+**Finally:** we do this for many combinations of initial number of atacking and defending soldiers.
+
+```{r, warning = FALSE , message= FALSE}
+
+library(furrr)
+future::plan(multiprocess)
+
+defend_vector <- 1:10
+atack_vector <- 2:10
+N <- 5000
+
+result_df <- expand.grid(defend_vector , atack_vector) %>%
+  rename(defend = Var1, atack = Var2) 
+
+prob_win <- furrr::future_pmap_dbl(result_df, function(defend, atack) {
+    multi_sim(N, n_soldiers_atacker = atack, n_soldiers_defender = defend)
+     }, .progress = TRUE  ) 
+
+result_df$prob_win <- 100 * prob_win
+
+
+
+```
+
+
+# Analysing the results
+
+Here I use `ggplot` to analyse the winning probability of the atacker across the initial number of atackers and defenders. I also draw a line across the points where these numbers are the same for easier comparison.
+
+Some conclusions stand out:
+
+#### This is an atackers' game ...
+
+The game rewatrs initiative. Unless the number of defenders is much higher than the number of atackers the probability of the atacker winning is systematically above 50% ...
+
+#### ... but small numbers favour defense
+
+For a small number of atacking soldiers (2 or 3) the game favours the defenders. 
+
+This is because although the atackers can use more dice, the ties favour the defender. So if the number of atackers is small, the advantage of the dice is lost so the defender has the upper-hand in this situation.
+
+However, has the number of soliders increases, even half the atackers can have a good chance of winning: 6 starting atackers have a good chance of winning to 12 defenders, that is because the advantage of using more dice is way more important than winning ties.
+
+
+
+
+```{r}
+
+ggplot(result_df, aes(x = as.factor(atack), y = as.factor(defend)))+
+  geom_tile(aes(fill = prob_win))+
+  geom_text(aes(label = round(prob_win, digits = 4)), color = 'white')+
+  geom_abline(slope = 1, intercept = 1) +
+  scale_fill_gradient(low = "#f0931a", high = "#74e031")+
+  xlab('N atackers')+
+  ylab('N defenders') +
+  ggtitle('Prob of atacker winning')+
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+```
+
+
+```{r}
+
+
+ggplot(result_df, aes(x = as.factor(atack), y = as.factor(defend), color = as.factor(prob_win > 50)))+
+  geom_point() +
+  geom_abline(slope = 1, intercept = 1) +  
+  xlab('N atackers')+
+  ylab('N defenders') +
+  ggtitle('Prob of atacker winning > 50 % (blue)')+
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+
+ 
+
+
+```
+
+
+
+```{r}
+
+
+ggplot(result_df, aes(x = atack, y = prob_win, color = as.factor(defend)))+
+  geom_line()+
+  geom_point()+
+  geom_hline(yintercept = 50) +
+  labs(color = ' N defenders', title = 'Prob of the atacker winning') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+
+  
+
+```
+
+
+
+
+## Next steps
+
+The objective of this article was to use R to provide a quick simulation based analysis. In the future it would be interesting to compare our results with the eplicit calculation of the winning probabilities.
+
+
+
+
+
+
+
+
+
+
+
