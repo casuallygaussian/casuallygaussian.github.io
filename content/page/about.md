@@ -1,16 +1,16 @@
 ---
 comments: false
-subtitle: Why you'd want to go on a date with me
+subtitle: Let's get in touch!
 title: About me
 ---
 
-My name is Inigo Montoya. I have the following qualities:
+My name is Rodrigo Ferreira and I am a Data-Scientist.
+**I love all things data**: Machine-Learning, Econometrics and Programming are areas I delve into every day to produce meaningful business solutions.
 
-- I rock a great mustache
-- I'm extremely loyal to my family
+I created this blog to share to organize in one place useful new stuff I learn, to share new thoughts, and above all to share my my nerdiest side.
 
-What else do you need?
+If you have you interesting Data-Science, Statistics and AI topics you want to discuss do not hesitate to reach-out!
 
-### my history
+Cheers!
 
-To be honest, I'm having some trouble remembering right now, so why don't you just watch [my movie](http://en.wikipedia.org/wiki/The_Princess_Bride_%28film%29) and it will answer **all** your questions.
+

@@ -1,0 +1,143 @@
+---
+title: Integrating Python and R with Reticulate
+author: R package build
+date: '2021-05-18'
+slug: []
+categories: []
+tags:
+  - R
+  - Python
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+![Photo by Bert from Pexels](images/pexels-bert-5985284.jpg)
+
+
+
+```{r setup, echo = FALSE, include = FALSE, message = FALSE, warning = FALSE}
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+```
+
+
+
+
+# Python vs R : why not both ?
+
+Every time you go on social-media and you read any "How to get into Data-Science ?" type of content, invariably someone is going to ask the question "Which language is better for data-science ?". 
+
+I understand why this may be important for some people. If someone is asking this question then probably they never programmed that much before, and if you are going to spend countless hours getting good in a language, you want to make sure that you are using the correct language ... right ?
+
+In my view, in a way yes ... but actually no ...
+
+Even in a more professional setting, there seems to be people who have very dogmatic attaching to a specific language, and some of the most contentious discussions I have seen occurring between data-scientists have been based on whether conducting a project primarily in R or Python.
+
+The fact is that type of discussions is 90% of the times misdirected. Ultimately, what I observe is that knowing both will make you a much better data-scientist. 
+
+## The pros of using both
+
+1) I use both languages at the same time many times and I see a dramatic acceleration in my ability to perform an analysis or modeling task due to the fact that I can switch between languages based on their strength. I may do quick cleaning and exploration in R, switch to Python for SKlearn and then go back to R to quickly display my results.  
+
+2) Data-Science is fundamentally about learning: learning about new tools, and learning about your data, and transform this learning into business-oriented insights. If your plan is to stick to a single language/tool for your entire career then you should reconsider if you want to be a Data-Scientist to begin with.  
+
+3) Knowing more languages well will make you a better programmer. Different languages have different ideas embedded in them, and exposure to this is positive. 
+
+4) There are nowadays many solutions to integrate Python and R. Bellow I show an example on how to do so very easily by using `Reticulate` in RStudio. 
+
+
+## The caveats
+
+1) Of course, there may be engineering constrains that force you to use a particular language. This varies wildly between projects and companies, and having more tools in your repertoire will certainly be useful at some point.
+
+2) Some people can get trapped in the "starting-trap" : when you start learning something new, it is generally easier to make some progress, this creates some excitement. But it is much better to be a good programmer in a language before jumping to another. This is because having strong foundations concepts is important and they can be applied in any language. That is not to say you should not learn both Python and R : what it says is that if you are starting , really master one before jumping to the other.
+
+
+
+# Using Reticulate in RStudio
+
+In RStudio, first we install `reticulate`,then we create an environment variable **MY_PYTHON_ENV** with the path to python3 ... and that's it !!
+
+
+```{r}
+
+library(reticulate)
+MY_PYTHON_ENV = "/usr/local/bin/python3"
+Sys.setenv(RETICULATE_PYTHON = MY_PYTHON_ENV)
+
+
+```
+
+If you are using an RMarkdown file you can then run normal python code just by creating a `{python}` cell in R.
+
+```{python}
+
+import pandas as pd
+
+df = pd.DataFrame({
+  "var1" : [1,2,3],
+  "var2" : ["a","b","c"],
+  
+})
+
+df.head()
+
+```
+
+
+## Transfering data between R and Python
+
+
+```{r}
+
+library(kableExtra) #I like to use it to display nice tables in RMarkdown
+
+
+```
+
+
+
+Is also very simple here is an R data frame.
+
+```{r results='asis'}
+
+df_r <- mtcars
+
+head(df_r) %>%
+  kable() %>%
+  kable_styling()
+
+
+
+
+```
+
+
+Now in python :
+
+```{python}
+
+import pandas as pd
+
+vars_to_median = ['mpg', 'cyl', 'disp']
+
+median_list = r.df_r[vars_to_median].median()
+
+```
+
+
+Now back to R
+
+```{r}
+
+py$median_list
+
+
+```
+
+
+
+

@@ -1,0 +1,361 @@
+---
+title: Integrating Python and R with Reticulate
+author: R package build
+date: '2021-05-18'
+slug: []
+categories: []
+tags:
+  - R
+  - Python
+type: ''
+subtitle: ''
+image: ''
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+<script src="{{< blogdown/postref >}}index.en_files/kePrint/kePrint.js"></script>
+<link href="{{< blogdown/postref >}}index.en_files/lightable/lightable.css" rel="stylesheet" />
+
+
+<div class="figure">
+<img src="images/pexels-bert-5985284.jpg" alt="" />
+<p class="caption">Photo by Bert from Pexels</p>
+</div>
+<div id="python-vs-r-why-not-both" class="section level1">
+<h1>Python vs R : why not both ?</h1>
+<p>Every time you go on social-media and you read any “How to get into Data-Science ?” type of content, invariably someone is going to ask the question “Which language is better for data-science ?”.</p>
+<p>I understand why this may be important for some people. If someone is asking this question then probably they never programmed that much before, and if you are going to spend countless hours getting good in a language, you want to make sure that you are using the correct language … right ?</p>
+<p>In my view, in a way yes … but actually no …</p>
+<p>Even in a more professional setting, there seems to be people who have very dogmatic attaching to a specific language, and some of the most contentious discussions I have seen occurring between data-scientists have been based on whether conducting a project primarily in R or Python.</p>
+<p>The fact is that type of discussions is 90% of the times misdirected. Ultimately, what I observe is that knowing both will make you a much better data-scientist.</p>
+<div id="the-pros-of-using-both" class="section level2">
+<h2>The pros of using both</h2>
+<ol style="list-style-type: decimal">
+<li><p>I use both languages at the same time many times and I see a dramatic acceleration in my ability to perform an analysis or modeling task due to the fact that I can switch between languages based on their strength. I may do quick cleaning and exploration in R, switch to Python for SKlearn and then go back to R to quickly display my results.</p></li>
+<li><p>Data-Science is fundamentally about learning: learning about new tools, and learning about your data, and transform this learning into business-oriented insights. If your plan is to stick to a single language/tool for your entire career then you should reconsider if you want to be a Data-Scientist to begin with.</p></li>
+<li><p>Knowing more languages well will make you a better programmer. Different languages have different ideas embedded in them, and exposure to this is positive.</p></li>
+<li><p>There are nowadays many solutions to integrate Python and R. Bellow I show an example on how to do so very easily by using <code>Reticulate</code> in RStudio.</p></li>
+</ol>
+</div>
+<div id="the-caveats" class="section level2">
+<h2>The caveats</h2>
+<ol style="list-style-type: decimal">
+<li><p>Of course, there may be engineering constrains that force you to use a particular language. This varies wildly between projects and companies, and having more tools in your repertoire will certainly be useful at some point.</p></li>
+<li><p>Some people can get trapped in the “starting-trap” : when you start learning something new, it is generally easier to make some progress, this creates some excitement. But it is much better to be a good programmer in a language before jumping to another. This is because having strong foundations concepts is important and they can be applied in any language. That is not to say you should not learn both Python and R : what it says is that if you are starting , really master one before jumping to the other.</p></li>
+</ol>
+</div>
+</div>
+<div id="using-reticulate-in-rstudio" class="section level1">
+<h1>Using Reticulate in RStudio</h1>
+<p>In RStudio, first we install <code>reticulate</code>,then we create an environment variable <strong>MY_PYTHON_ENV</strong> with the path to python3 … and that’s it !!</p>
+<pre class="r"><code>library(reticulate)
+MY_PYTHON_ENV = &quot;/usr/local/bin/python3&quot;
+Sys.setenv(RETICULATE_PYTHON = MY_PYTHON_ENV)</code></pre>
+<p>If you are using an RMarkdown file you can then run normal python code just by creating a <code>{python}</code> cell in R.</p>
+<pre class="python"><code>
+import pandas as pd
+
+df = pd.DataFrame({
+  &quot;var1&quot; : [1,2,3],
+  &quot;var2&quot; : [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;],
+  
+})
+
+df.head()</code></pre>
+<pre><code>##    var1 var2
+## 0     1    a
+## 1     2    b
+## 2     3    c</code></pre>
+<div id="transfering-data-between-r-and-python" class="section level2">
+<h2>Transfering data between R and Python</h2>
+<pre class="r"><code>library(kableExtra) #I like to use it to display nice tables in RMarkdown</code></pre>
+<p>Is also very simple here is an R data frame.</p>
+<pre class="r"><code>df_r &lt;- mtcars
+
+head(df_r) %&gt;%
+  kable() %&gt;%
+  kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+mpg
+</th>
+<th style="text-align:right;">
+cyl
+</th>
+<th style="text-align:right;">
+disp
+</th>
+<th style="text-align:right;">
+hp
+</th>
+<th style="text-align:right;">
+drat
+</th>
+<th style="text-align:right;">
+wt
+</th>
+<th style="text-align:right;">
+qsec
+</th>
+<th style="text-align:right;">
+vs
+</th>
+<th style="text-align:right;">
+am
+</th>
+<th style="text-align:right;">
+gear
+</th>
+<th style="text-align:right;">
+carb
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Mazda RX4
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.90
+</td>
+<td style="text-align:right;">
+2.620
+</td>
+<td style="text-align:right;">
+16.46
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mazda RX4 Wag
+</td>
+<td style="text-align:right;">
+21.0
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.90
+</td>
+<td style="text-align:right;">
+2.875
+</td>
+<td style="text-align:right;">
+17.02
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Datsun 710
+</td>
+<td style="text-align:right;">
+22.8
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+93
+</td>
+<td style="text-align:right;">
+3.85
+</td>
+<td style="text-align:right;">
+2.320
+</td>
+<td style="text-align:right;">
+18.61
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hornet 4 Drive
+</td>
+<td style="text-align:right;">
+21.4
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+258
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:right;">
+3.08
+</td>
+<td style="text-align:right;">
+3.215
+</td>
+<td style="text-align:right;">
+19.44
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Hornet Sportabout
+</td>
+<td style="text-align:right;">
+18.7
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+360
+</td>
+<td style="text-align:right;">
+175
+</td>
+<td style="text-align:right;">
+3.15
+</td>
+<td style="text-align:right;">
+3.440
+</td>
+<td style="text-align:right;">
+17.02
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Valiant
+</td>
+<td style="text-align:right;">
+18.1
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+225
+</td>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+2.76
+</td>
+<td style="text-align:right;">
+3.460
+</td>
+<td style="text-align:right;">
+20.22
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+<p>Now in python :</p>
+<pre class="python"><code>
+import pandas as pd
+
+vars_to_median = [&#39;mpg&#39;, &#39;cyl&#39;, &#39;disp&#39;]
+
+median_list = r.df_r[vars_to_median].median()</code></pre>
+<p>Now back to R</p>
+<pre class="r"><code>py$median_list</code></pre>
+<pre><code>##   mpg   cyl  disp 
+##  19.2   6.0 196.3</code></pre>
+</div>
+</div>
